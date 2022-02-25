@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        How Knowledge Bowl Online was made
+    </title>
+    <!-- Latest compiled and minified CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script data-ad-client="ca-pub-1911904185412924" async="" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- Latest compiled JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="https://kbpractice.com">
+            Knowledge Bowl Practice
+        </a>
+        <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="navbar-collapse collapse" id="navbarCollapse">
+          <ul class="navbar-nav me-auto mb-2 mb-md-0">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="https://kbpractice.com">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="https://online.kbpractice.com">Multiplayer</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="https://db.kbpractice.com">Access Database</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="https://en.wikipedia.org/wiki/Knowledge_Bowl">Learn more</a>
+            </li>
+          </ul>
+          <form class="d-flex">
+            <div class="input-group">
+                <input type="text" class="form-control" id="searchInput" placeholder="Search database" aria-label="Answer question" aria-describedby="basic-addon2">
+                <div class="input-group-append">
+                  <button class="btn btn-primary" type="button" data-toggle="tooltip" data-placement="top" title="Submit your search term" onclick="location.replace('https://db.kbpractice.com/?q=' + document.getElementById('searchInput').value);">Search</button>
+                </div>
+            </div>
+          </form>
+          
+        </div>
+      </div>
+    </nav>
+    <main class="container">
+        <h1 class="my-5">
+            How Knowledge Bowl Online was made
+        </h1>
+        <h3>
+            How I Created the Site
+        </h3>
+        <p>
+            Knowledge Bowl Online is hosted on an Azure server with a professional plan for optimal performance. The backend was made using Node.JS and socket.io. The database was made by web-scraping almost 40 PDFs of past Knowledge Bowl meets. There was only one problem: the PDFs are read line by line, but the actual questions are in even squares.
+        </p>
+        <h3>
+            Inserting Questions into the Database
+        </h3>
+        <p>
+            The way I combatted this was to convert every PDF to an image with python. There were also headers and footers to each PDF that had to be ignored when parsing the file, so the first step was cropping all of those away such that all that was left was an image that was divided into ten even chunks, each one being a question. Then, still using Python, each image was separated into ten even chunks. Each image now contained one question.
+
+            Using the ImageCV library to read the text of the image, extracting what parts of the text were the subject, which were the question, and which were the answer was fairly straightforward: it only involved splitting the text by lines. The first line was always the subject. The last line was always the answer. This meant that by taking away those two, you could always get the rest of the question. The last step was going through each image and splitting the question like so, and then inserting each value into a database. This was the final step that involved Python.
+        </p>
+        <h3>
+            Requesting and Serving a Question
+        </h3>
+        <p>
+            When a new question is requested by the client, no API call is made. The client simply sends a message to the server to get a new question, and the server directly queries the database, running on a shared hosting account that I set up for hobby projects. I may migrate soon, but honestly, I’ve seen no use for it yet. Then, once every variable is set properly, the server sets an interval to send out the question and keep adding one word. That’s right, it doesn’t send out one word at a time. It sends out the entire question up until the last word every time. When testing, this yielded much more consistent results, especially with slow connections.
+        </p>
+        <h3>
+            How the UI Was Made
+        </h3>
+        <p>
+            The UI of KB Practice is made using Bootstrap. I may make my own design system for the site in the future, but it was never intended to look amazing. It’s supposed to do its job and look acceptable while doing that, and I’d say Bootstrap pretty much does that out of the box with little to no customization. 
+        </p>
+        <h3>
+            Points in KB Practice Online
+        </h3>
+        <p>
+            Points in KB Practice Online are still experimental, and should be expected to sometimes reset randomly. I’m still working on storing them in a more permanent manner such that they don’t reset every time you change your name. I don’t have any intention of storing them in the localStorage like a username would be, however. The goal is to imitate Knowledge Bowl as closely as possible, which means points are gained each session and don’t carry over eternally. Every round is a fresh start.
+        </p>
+        <h3>
+            Rereads in Knowledge Bowl VS KB Practice Online
+        </h3>
+        <p>
+            Speaking of ways the site imitates Knowledge Bowl, there’s one key way in which it doesn’t: rereads. If a player buzzes in in Knowledge Bowl, and they get it wrong, the question restarts. However, in KB Practice Online, I saw no need for this. The text is all still there on the screen, after all, and users can still reread if they want to. So, in a Protobowl like fashion, rather than begin the question anew, the question picks up exactly where it left off.
+        </p>
+        <h3>
+            Humble Beginnings
+        </h3>
+        <p>
+            When Knowledge Bowl Online was first released, it was running on the Free plan on Heroku through an Iframe on my shared server. As expected, it crashed. A lot. There was no getting around it. When I migrated to Azure, these crashes decreased tenfold. But they still happen occasionally. One recurring bug that I’ve tried to fix countless times only to see it pop up again (just a little less frequently) is the infamous “undefined” bug. 
+        </p>
+        <h3>
+            Future Bugs
+        </h3>
+        <p>
+            Randomly at times during gameplay, the site will break and begin to spam “Question is over. Correct answer: undefined” in the chat. To combat this without actually solving the problem, I’ve added a little failsafe. If the server finds itself either spamming the same answer or sending an undefined answer, it will exit the process. This certainly isn’t ideal, but at least it doesn’t require me manually entering into Azure and restarting the app. It has to run independently.
+        </p>
+        <hr>
+    </main>
+</body>
+</html>
